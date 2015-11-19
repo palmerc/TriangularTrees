@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<body onload="main()">
+<img id="birch" src="birch.png" alt="Birch" width="618" height="464"  style="display: none;"/>
+<img id="butterfly" src="butterfly.png" alt="Butterfly" width="618" height="464"  style="display: none;"/>
+<img id="frog" src="frog.png" alt="Frog" width="618" height="464"  style="display: none;"/>
+<img id="leaf" src="leaf.png" alt="Leaf" width="618" height="464"  style="display: none;"/>
+<img id="narcissus" src="narcissus.png" alt="Narcissus" width="618" height="464"  style="display: none;"/>
+<img id="owl" src="owl.png" alt="Owl" width="618" height="464"  style="display: none;"/>
+<img id="pine" src="pine.png" alt="Pine" width="618" height="464"  style="display: none;"/>
+<img id="unicorn" src="unicorn.png" alt="Unicorn" width="618" height="464"  style="display: none;"/>
+
+<script>
+var canvasWidth = 800;
+var canvasHeight = 600;
+var imageWidth = 100;
+var imageHeight = 100;
+var rowHeight = 0;
+var columnWidth = 0;
+var forestRows = 15;
+var forestColumns = 13;
+	
+function main() {
+	var body = document.getElementsByTagName('body')[0];
+	var canvas = document.createElement('canvas');
+	canvas.setAttribute('id', 'forest');
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;	
+	canvas.style.cssText = 'border:1px solid #d3d3d3;';
+	body.appendChild(canvas);
+	
+	rowHeight = canvasHeight / forestRows;
+	columnWidth = canvasWidth / forestColumns;
+	
+	drawLines();
+	updateForest();
+}
+
+function drawLines() {
+	var canvas = document.getElementById('forest');
+    var context = canvas.getContext('2d');
+	
+	horizonX = canvasWidth / 2;
+	horizonY = canvasHeight / 2;    
+	for (forestColumn = 0; forestColumn < forestColumns; forestColumn++) {
+		var startX = horizonX + (forestColumn * columnWidth);
+		drawLine(context, startX, canvasHeight, horizonX, horizonY);
+		if (forestColumn != 0) {
+			var startX = horizonX - (forestColumn * columnWidth);
+			drawLine(context, startX, canvasHeight, horizonX, horizonY);
+			forestColumn++
+		}	
+	}
+}
+
+function drawLine(context, fromX, fromY, toX, toY) {
+	context.beginPath();
+	context.moveTo(fromX, fromY);
+	context.lineTo(toX, toY);
+	context.stroke();
+}
+
+function drawTriangle(context, aX, aY, bX, bY, cX, cY) {
+	context.beginPath();
+	context.moveTo(aX, aY);
+	context.lineTo(bX, bY);
+	context.lineTo(cX, cY);
+	context.closePath();
+	context.strokeStyle = '#ff0000';
+
+	context.stroke();
+}
+
+function canvasPosition(row, column) {
+	var aX = columnWidth * column;
+	var aY = canvasHeight;
+	var bY = canvasHeight;
+	var cY = (rowHeight * row) + horizonY;
+	
+	var bigOpposite = canvasHeight - horizonY;
+	var theta = Math.atan(bigOpposite / (horizonX - aX));
+	var smallOpposite = bY - cY;
+	var adjacentLength = smallOpposite / Math.tan(theta);
+	x = adjacentLength + aX;
+	y = cY;
+	
+	return [x, y];
+}
+
+function slope(fromX, fromY, toX, toY) {
+	return (toY - fromY) / (toX - fromX);
+}
+
+function updateForest() {
+	var trees = ['birch', 'pine'];
+	var canvasBorderPadding = 10;
+	var gridWidth = (canvasWidth - (2 * canvasBorderPadding)) / forestColumns;
+	var gridHeight = (canvasHeight - (2 * canvasBorderPadding)) / forestRows;
+		
+	var canvas = document.getElementById('forest');
+    var context = canvas.getContext('2d');
+	for (row = 0; row < forestRows; row++) {
+		for (column = 0; column < forestColumns; column++) {
+			position = canvasPosition(row, column);
+			var scaleFactor = (row + 1) / forestRows;
+			var image = document.getElementById(trees[1]);
+			var scaledWidth = imageWidth * scaleFactor;
+			var scaledHeight = imageHeight * scaleFactor;
+			var x = position[0] - (imageWidth / 2);
+			var y = position[1] - imageHeight;
+    		context.drawImage(image, x, y, imageWidth, imageHeight);
+		}
+	}
+}
+
+function initializeArray(rows, cols) {
+	arr = new Array(rows);
+	
+	for (i = 0; i < rows; i++) {
+		arr[i] = new Array(cols);
+	}
+	
+	return arr;
+}
+
+</script>
+
+</body>
+</html>
