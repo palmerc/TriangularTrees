@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
-
+<head>
+<meta http-equiv="Refresh" content="10">
+</head>
 <body onload="main()">
 <img id="birch" src="birch.png" alt="Birch" width="618" height="464"  style="display: none;"/>
 <img id="butterfly" src="butterfly.png" alt="Butterfly" width="618" height="464"  style="display: none;"/>
@@ -12,24 +14,46 @@
 <img id="unicorn" src="unicorn.png" alt="Unicorn" width="618" height="464"  style="display: none;"/>
 
 <script>
+var dataStructure  = [['B','','','','','','','','','','','',''],
+                      ['','P','','','','','','','','','','',''],
+                      ['','','B','','','','','','','','','',''],
+                      ['','','','P','','','','','','','','',''],
+                      ['','','','','B','','','','','','','',''],
+                      ['','','','','','P','','','','','','',''],
+                      ['','','','','','','B','','','','','',''],
+                      ['','','','','','','','P','','','','',''],
+                      ['','','','','','','','','B','','','',''],
+                      ['','','','','','','','','','P','','',''],
+                      ['','','','','','','','','','','B','',''],
+                      ['','','','','','','','','','','','P',''],
+                      ['','','','','','','','','','','','','B'],
+                      ['','','','','','','','','','','','','']];
+
 var canvasWidth = 800;
 var canvasHeight = 600;
 var imageWidth = 100;
 var imageHeight = 100;
 var rowHeight = 0;
 var columnWidth = 0;
-var forestRows = 15;
-var forestColumns = 13;
+var forestRows = 0;
+var forestColumns = 0;
 	
 function main() {
+	var size = {
+		width: window.innerWidth || document.body.clientWidth,
+		height: window.innerHeight || document.body.clientHeight
+	}
+
 	var body = document.getElementsByTagName('body')[0];
 	var canvas = document.createElement('canvas');
 	canvas.setAttribute('id', 'forest');
-	canvas.width = canvasWidth;
-	canvas.height = canvasHeight;	
+	canvas.width = size['width'] - 20;
+	canvas.height = size['height'] - 20;	
 	canvas.style.cssText = 'border:1px solid #d3d3d3;';
 	body.appendChild(canvas);
 	
+	forestRows = dataStructure.length;
+	forestColumns = dataStructure[0].length;
 	rowHeight = canvasHeight / forestRows;
 	columnWidth = canvasWidth / forestColumns;
 	
@@ -102,14 +126,22 @@ function updateForest() {
     var context = canvas.getContext('2d');
 	for (row = 0; row < forestRows; row++) {
 		for (column = 0; column < forestColumns; column++) {
-			position = canvasPosition(row, column);
-			var scaleFactor = (row + 1) / forestRows;
-			var image = document.getElementById(trees[1]);
-			var scaledWidth = imageWidth * scaleFactor;
-			var scaledHeight = imageHeight * scaleFactor;
-			var x = position[0] - (imageWidth / 2);
-			var y = position[1] - imageHeight;
-    		context.drawImage(image, x, y, imageWidth, imageHeight);
+			var image = null;
+			if (dataStructure[row][column] === 'B') {
+				image = document.getElementById(trees[0]);
+			} else if (dataStructure[row][column] === 'P') {
+				image = document.getElementById(trees[1]);
+			}
+			
+			if (image != null) {
+				position = canvasPosition(row, column);
+				var scaleFactor = (row + 1) / forestRows;
+				var scaledWidth = imageWidth * scaleFactor;
+				var scaledHeight = imageHeight * scaleFactor;
+				var x = position[0] - (imageWidth / 2);
+				var y = position[1] - imageHeight;
+				context.drawImage(image, x, y, imageWidth, imageHeight);
+			}
 		}
 	}
 }
