@@ -14,7 +14,7 @@
 <img id="unicorn" src="unicorn.png" alt="Unicorn" width="618" height="464"  style="display: none;"/>
 
 <script>
-var dataStructure  = [['B','','','','','','','','','','','',''],
+var dataStructure  = [['B','','','','','','','','','','','','T'],
                       ['','P','','','','','','','','','','',''],
                       ['','','B','','','','','','','','','',''],
                       ['','','','P','','','','','','','','',''],
@@ -24,13 +24,10 @@ var dataStructure  = [['B','','','','','','','','','','','',''],
                       ['','','','','','','','P','','','','',''],
                       ['','','','','','','','','B','','','',''],
                       ['','','','','','','','','','P','','',''],
-                      ['','','','','','','','','','','B','',''],
-                      ['','','','','','','','','','','','P',''],
-                      ['','','','','','','','','','','','','B'],
-                      ['','','','','','','','','','','','','']];
-
-var canvasWidth = 800;
-var canvasHeight = 600;
+                      ['O','','F','','','','','','','','B','','U']];
+var serverURL = 'http://127.0.0.1/scale/';
+var canvasWidth = 0;
+var canvasHeight = 0;
 var imageWidth = 100;
 var imageHeight = 100;
 var rowHeight = 0;
@@ -43,18 +40,24 @@ function main() {
 		width: window.innerWidth || document.body.clientWidth,
 		height: window.innerHeight || document.body.clientHeight
 	}
+	canvasWidth = size['width'] - 20;
+	canvasHeight = size['height'] - 20;	
 
 	var body = document.getElementsByTagName('body')[0];
 	var canvas = document.createElement('canvas');
 	canvas.setAttribute('id', 'forest');
-	canvas.width = size['width'] - 20;
-	canvas.height = size['height'] - 20;	
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
 	canvas.style.cssText = 'border:1px solid #d3d3d3;';
 	body.appendChild(canvas);
 	
+    var context = canvas.getContext('2d');
+	context.font = "30px Arial";
+	context.fillText("Weight", 10, 50);
+	
 	forestRows = dataStructure.length;
 	forestColumns = dataStructure[0].length;
-	rowHeight = canvasHeight / forestRows;
+	rowHeight = (canvasHeight / forestRows) - 40;
 	columnWidth = canvasWidth / forestColumns;
 	
 	drawLines();
@@ -67,6 +70,12 @@ function drawLines() {
 	
 	horizonX = canvasWidth / 2;
 	horizonY = canvasHeight / 2;    
+
+	context.beginPath();
+    context.rect(0, horizonY, canvasWidth, canvasHeight - horizonY);
+    context.fillStyle = '#C1D311';
+    context.fill();
+	
 	for (forestColumn = 0; forestColumn < forestColumns; forestColumn++) {
 		var startX = horizonX + (forestColumn * columnWidth);
 		drawLine(context, startX, canvasHeight, horizonX, horizonY);
@@ -82,6 +91,7 @@ function drawLine(context, fromX, fromY, toX, toY) {
 	context.beginPath();
 	context.moveTo(fromX, fromY);
 	context.lineTo(toX, toY);
+	context.strokeStyle = '#d3d3d3';
 	context.stroke();
 }
 
@@ -98,7 +108,6 @@ function drawTriangle(context, aX, aY, bX, bY, cX, cY) {
 
 function canvasPosition(row, column) {
 	var aX = columnWidth * column;
-	var aY = canvasHeight;
 	var bY = canvasHeight;
 	var cY = (rowHeight * row) + horizonY;
 	
@@ -118,6 +127,7 @@ function slope(fromX, fromY, toX, toY) {
 
 function updateForest() {
 	var trees = ['birch', 'pine'];
+	var animals = ['butterfly', 'frog', 'owl', 'unicorn'];
 	var canvasBorderPadding = 10;
 	var gridWidth = (canvasWidth - (2 * canvasBorderPadding)) / forestColumns;
 	var gridHeight = (canvasHeight - (2 * canvasBorderPadding)) / forestRows;
@@ -131,6 +141,14 @@ function updateForest() {
 				image = document.getElementById(trees[0]);
 			} else if (dataStructure[row][column] === 'P') {
 				image = document.getElementById(trees[1]);
+			} else if (dataStructure[row][column] === 'T') {
+				image = document.getElementById(animals[0]);
+			} else if (dataStructure[row][column] === 'F') {
+				image = document.getElementById(animals[1]);
+			} else if (dataStructure[row][column] === 'O') {
+				image = document.getElementById(animals[2]);
+			} else if (dataStructure[row][column] === 'U') {
+				image = document.getElementById(animals[3]);
 			}
 			
 			if (image != null) {
