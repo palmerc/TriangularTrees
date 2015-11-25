@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Refresh" content="10">
+<meta http-equiv="Refresh" content="30">
+
 </head>
 <body onload="main()">
 <img id="birch" src="birch.png" alt="Birch" width="618" height="464"  style="display: none;"/>
@@ -14,17 +15,32 @@
 <img id="unicorn" src="unicorn.png" alt="Unicorn" width="618" height="464"  style="display: none;"/>
 
 <script>
-var dataStructure  = [['B','','','','','','','','','','','','T'],
-                      ['','P','','','','','','','','','','',''],
-                      ['','','B','','','','','','','','','',''],
-                      ['','','','P','','','','','','','','',''],
-                      ['','','','','B','','','','','','','',''],
-                      ['','','','','','P','','','','','','',''],
-                      ['','','','','','','B','','','','','',''],
-                      ['','','','','','','','P','','','','',''],
-                      ['','','','','','','','','B','','','',''],
-                      ['','','','','','','','','','P','','',''],
-                      ['O','','F','','','','','','','','B','','U']];
+var trees = {
+	BIRCH: 'birch',
+	SPRUCE: 'pine'
+}
+var animals = {
+	BUTTERFLY: 'butterfly',
+	CHAMELEON: 'chameleon',
+	FROG: 'frog',
+	FURRY_LITTLE_THING: 'furryLittleThing',
+	OWL: 'owl',
+	PARROT: 'parrot',
+	PENGUINS: 'penguins',
+	SQUIRREL: 'squirrel',
+	UNICORN: 'unicorn'
+}
+var dataStructure  = [['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','',''],
+                      ['','','','','','','','','','','','','']];
 var serverURL = 'http://127.0.0.1/scale/';
 var canvasWidth = 0;
 var canvasHeight = 0;
@@ -34,8 +50,15 @@ var rowHeight = 0;
 var columnWidth = 0;
 var forestRows = 0;
 var forestColumns = 0;
+var treeWeightInGrams = 10;
+var animalThresholdInTrees = 5;
 	
 function main() {
+	var locallyStoredDataStructure = JSON.parse(sessionStorage.getItem('myForest'));
+	if (locallyStoredDataStructure != null) {
+		dataStructure = locallyStoredDataStructure;
+	}
+
 	var size = {
 		width: window.innerWidth || document.body.clientWidth,
 		height: window.innerHeight || document.body.clientHeight
@@ -60,6 +83,7 @@ function main() {
 	rowHeight = (canvasHeight / forestRows) - 40;
 	columnWidth = canvasWidth / forestColumns;
 	
+	updateDataStructure();
 	drawLines();
 	updateForest();
 }
@@ -91,7 +115,7 @@ function drawLine(context, fromX, fromY, toX, toY) {
 	context.beginPath();
 	context.moveTo(fromX, fromY);
 	context.lineTo(toX, toY);
-	context.strokeStyle = '#d3d3d3';
+	context.strokeStyle = '#D3D3D3';
 	context.stroke();
 }
 
@@ -101,7 +125,7 @@ function drawTriangle(context, aX, aY, bX, bY, cX, cY) {
 	context.lineTo(bX, bY);
 	context.lineTo(cX, cY);
 	context.closePath();
-	context.strokeStyle = '#ff0000';
+	context.strokeStyle = '#FF0000';
 
 	context.stroke();
 }
@@ -125,9 +149,67 @@ function slope(fromX, fromY, toX, toY) {
 	return (toY - fromY) / (toX - fromX);
 }
 
+function updateDataStructure(weightInGrams) {
+	weightInGrams = 100;
+	var numberOfTrees = Math.floor(weightInGrams / treeWeightInGrams);
+	var numberOfAnimals = numberOfTrees / animalThresholdInTrees;
+	
+	var existingNumberOfTrees = numberOfItemsInArrayMatching(trees);
+	var existingNumberOfAnimals = numberOfItemsInArrayMatching(animals);
+	
+	for (var i = 0; i < numberOfTrees - existingNumberOfTrees; i++) {
+		var item = randomTree();
+		updateDataStructureWithItem(item);
+	}
+	
+	for (var i = 0; i < numberOfAnimals - existingNumberOfAnimals; i++) {
+		var item = randomAnimal();
+		updateDataStructureWithItem(item);
+	}
+	
+	sessionStorage.setItem('myForest', JSON.stringify(dataStructure));
+}
+
+function updateDataStructureWithItem(item) {
+	if (item != null) {
+		var rowIndex = Math.floor(Math.random() * dataStructure.length);
+		var columnIndex = Math.floor(Math.random() * dataStructure[0].length);
+		dataStructure[rowIndex][columnIndex] = item;
+	}
+}
+
+function numberOfItemsInArrayMatching(arrayOfValues) {
+	var count = 0;
+	for (var row = 0; row < forestRows; row++) {
+		for (var column = 0; column < forestColumns; column++) {
+			var item = dataStructure[row][column];
+			for (var key in arrayOfValues) {
+				var value = arrayOfValues[key];
+				if (value === item) {
+					count++;
+				}
+			}
+		}
+	}
+	
+	return count;
+}
+
+function randomAnimal() {
+	var animalKeys = Object.keys(animals);
+	var animalCount = animalKeys.length;
+	var index = Math.floor((Math.random() * animalCount));
+	return animals[animalKeys[index]];
+}
+
+function randomTree() {
+	var treeKeys = Object.keys(trees);
+	var treeCount = treeKeys.length;
+	var index = Math.floor((Math.random() * treeCount));
+	return trees[treeKeys[index]];
+}
+
 function updateForest() {
-	var trees = ['birch', 'pine'];
-	var animals = ['butterfly', 'frog', 'owl', 'unicorn'];
 	var canvasBorderPadding = 10;
 	var gridWidth = (canvasWidth - (2 * canvasBorderPadding)) / forestColumns;
 	var gridHeight = (canvasHeight - (2 * canvasBorderPadding)) / forestRows;
@@ -137,18 +219,18 @@ function updateForest() {
 	for (row = 0; row < forestRows; row++) {
 		for (column = 0; column < forestColumns; column++) {
 			var image = null;
-			if (dataStructure[row][column] === 'B') {
-				image = document.getElementById(trees[0]);
-			} else if (dataStructure[row][column] === 'P') {
-				image = document.getElementById(trees[1]);
-			} else if (dataStructure[row][column] === 'T') {
-				image = document.getElementById(animals[0]);
-			} else if (dataStructure[row][column] === 'F') {
-				image = document.getElementById(animals[1]);
-			} else if (dataStructure[row][column] === 'O') {
-				image = document.getElementById(animals[2]);
-			} else if (dataStructure[row][column] === 'U') {
-				image = document.getElementById(animals[3]);
+			if (dataStructure[row][column] === 'birch') {
+				image = document.getElementById(trees['BIRCH']);
+			} else if (dataStructure[row][column] === 'spruce') {
+				image = document.getElementById(trees['SPRUCE']);
+			} else if (dataStructure[row][column] === 'butterfly') {
+				image = document.getElementById(animals['BUTTERFLY']);
+			} else if (dataStructure[row][column] === 'frog') {
+				image = document.getElementById(animals['FROG']);
+			} else if (dataStructure[row][column] === 'owl') {
+				image = document.getElementById(animals['OWL']);
+			} else if (dataStructure[row][column] === 'unicorn') {
+				image = document.getElementById(animals['UNICORN']);
 			}
 			
 			if (image != null) {
