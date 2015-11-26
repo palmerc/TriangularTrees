@@ -279,11 +279,11 @@ function readJSON(){
         })
         .success(function() { 
 			console.log("JSON success, scale value " + scaleValue);
-			scaleValue = (Math.floor(Math.random() * 5000) + 1);
 			updateDisplayWeightWithWeightInGrams(scaleValue);
         })
         .error(function() { 
         	console.log("JSON error, fake Value " + scaleValue);
+        	scaleValue = (Math.floor(Math.random() * 5000) + 1);
         	updateDisplayWeightWithWeightInGrams(scaleValue);
         }); 
         
