@@ -148,11 +148,15 @@ function slope(fromX, fromY, toX, toY) {
 }
 
 function updateDisplayWeightWithWeightInGrams(weightInGrams) {
+	var weightInKilograms = weightInGrams / 100;
 	var canvas = document.getElementById('forest');
 	var context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, horizonY - 2 * imageHeight);
 	context.font = "30px Arial";
 	context.fillStyle = "#D3D3D3";
-	context.fillText("Weight: " + weightInGrams, 10, 50);
+	
+	var weightText = "Weight: " + weightInKilograms.toFixed(2) + "kg";
+	context.fillText(weightText, 10, 50);
 	
 	updateDataStructure(weightInGrams);
 }
@@ -268,20 +272,21 @@ function initializeArray(rows, cols) {
 
 //reading scale from json 
 function readJSON(){
-	var scaleValue = 0;
+	var scaleValue = null;
 	$.getJSON("http://127.0.0.1:8080/scale/", 
     	function(data) {
 			scaleValue = data.vekt;
         })
         .success(function() { 
 			console.log("JSON success, scale value " + scaleValue);
-		
         })
         .error(function() { 
-        	scaleValue = (Math.floor(Math.random() * 5000)+1);
         	console.log("JSON error, fake Value " + scaleValue);
         }) 
     ; 
+    	if (scaleValue == null) {
+			scaleValue = (Math.floor(Math.random() * 5000)+1);
+		}
         updateDisplayWeightWithWeightInGrams(scaleValue);
         setTimeout("readJSON()",2000);//milliseconds to next update
     }
