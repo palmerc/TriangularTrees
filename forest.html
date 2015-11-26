@@ -279,16 +279,15 @@ function readJSON(){
         })
         .success(function() { 
 			console.log("JSON success, scale value " + scaleValue);
+			scaleValue = (Math.floor(Math.random() * 5000) + 1);
+			updateDisplayWeightWithWeightInGrams(scaleValue);
         })
         .error(function() { 
         	console.log("JSON error, fake Value " + scaleValue);
-        }) 
-    ; 
-    	if (scaleValue == null) {
-			scaleValue = (Math.floor(Math.random() * 5000)+1);
-		}
-        updateDisplayWeightWithWeightInGrams(scaleValue);
-        setTimeout("readJSON()",2000);//milliseconds to next update
+        	updateDisplayWeightWithWeightInGrams(scaleValue);
+        }); 
+        
+        setTimeout("readJSON()", 2000);//milliseconds to next update
     }
 
 $( document ).ready(function() {
