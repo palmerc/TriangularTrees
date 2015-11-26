@@ -170,14 +170,22 @@ function updateDataStructure(weightInGrams) {
 	var existingNumberOfTrees = numberOfItemsInArrayMatching(trees);
 	var existingNumberOfAnimals = numberOfItemsInArrayMatching(animals);
 	
-	for (var i = 0; i < numberOfTrees - existingNumberOfTrees; i++) {
-		var item = randomTree();
-		updateDataStructureWithItem(item);
+	for (var i = 0; i < Math.abs(numberOfTrees - existingNumberOfTrees); i++) {
+		if (existingNumberOfTrees > numberOfTrees) {
+			removeItemOfType(trees);
+		} else {
+			var item = randomTree();
+			updateDataStructureWithItem(item);
+		}
 	}
 	
-	for (var i = 0; i < numberOfAnimals - existingNumberOfAnimals; i++) {
-		var item = randomAnimal();
-		updateDataStructureWithItem(item);
+	for (var i = 0; i < Math.abs(numberOfAnimals - existingNumberOfAnimals); i++) {
+		if (existingNumberOfAnimals > numberOfAnimals) {
+			removeItemOfType(animals);
+		} else {
+			var item = randomAnimal();
+			updateDataStructureWithItem(item);
+		}
 	}
 	
 	sessionStorage.setItem('myForest', JSON.stringify(dataStructure));
@@ -189,6 +197,25 @@ function updateDataStructureWithItem(item) {
 		var columnIndex = Math.floor(Math.random() * dataStructure[0].length);
 		dataStructure[rowIndex][columnIndex] = item;
 	}
+}
+
+function findMatchingItemInArray(arrayOfValues) {
+	var rowIndex = null;
+	var columnIndex = null;
+	for (var row = 0; row < forestRows; row++) {
+		for (var column = 0; column < forestColumns; column++) {
+			var item = dataStructure[row][column];
+			for (var key in arrayOfValues) {
+				var value = arrayOfValues[key];
+				if (value === item) {
+					rowIndex = row;
+					columnIndex = column;
+				}
+			}
+		}
+	}
+	
+	return [rowIndex, columnIndex];
 }
 
 function numberOfItemsInArrayMatching(arrayOfValues) {
@@ -206,6 +233,15 @@ function numberOfItemsInArrayMatching(arrayOfValues) {
 	}
 	
 	return count;
+}
+
+function removeItemOfType(arrayOfTypes) {
+	var location = findMatchingItemInArray(arrayOfTypes);
+	var row = location[0];
+	var column = location[1];
+	if (row != undefined && column != undefined) {
+		dataStructure[row][column] = '';
+	}
 }
 
 function randomAnimal() {
