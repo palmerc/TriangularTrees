@@ -43,7 +43,7 @@ var dataStructure  = [['','','','','','','','','','','','',''],
                       ['','','','','','','','','','','','',''],
                       ['','','','','','','','','','','','','']];
 
-var serverURL = 'http://127.0.0.1/scale/';
+var serverURL = 'http://forest:8080/scale/';
 var canvasWidth = 0;
 var canvasHeight = 0;
 var imageWidth = 100;
@@ -146,7 +146,7 @@ function slope(fromX, fromY, toX, toY) {
 }
 
 function updateDisplayWeightWithWeightInGrams(weightInGrams) {
-	var weightInKilograms = weightInGrams / 100;
+	var weightInKilograms = weightInGrams / 1000;
 	var canvas = document.getElementById('forest');
 	var context = canvas.getContext('2d');
 	context.clearRect(0, 0, canvas.width, horizonY - 2 * imageHeight);
@@ -308,7 +308,7 @@ function initializeArray(rows, cols) {
 //reading scale from json 
 function readJSON(){
 	var scaleValue = null;
-	$.getJSON("http://forest:8080/scale/", 
+	$.getJSON(serverURL, 
     	function(data) {
 			scaleValue = data.vekt;
         })
