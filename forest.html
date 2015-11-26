@@ -76,10 +76,6 @@ function main() {
 	canvas.style.cssText = 'border:1px solid #d3d3d3;';
 	body.appendChild(canvas);
 	
-    var context = canvas.getContext('2d');
-	context.font = "30px Arial";
-	context.fillText("Weight", 10, 50);
-	
 	forestRows = dataStructure.length;
 	forestColumns = dataStructure[0].length;
 	rowHeight = (canvasHeight / forestRows) - 40;
@@ -151,8 +147,17 @@ function slope(fromX, fromY, toX, toY) {
 	return (toY - fromY) / (toX - fromX);
 }
 
+function updateDisplayWeightWithWeightInGrams(weightInGrams) {
+	var canvas = document.getElementById('forest');
+	var context = canvas.getContext('2d');
+	context.font = "30px Arial";
+	context.fillStyle = "#D3D3D3";
+	context.fillText("Weight: " + weightInGrams, 10, 50);
+	
+	updateDataStructure(weightInGrams);
+}
+
 function updateDataStructure(weightInGrams) {
-	//weightInGrams = 100;
 	console.log("updateDataStructure(weightInGrams) value " + weightInGrams);
         
 	var numberOfTrees = Math.floor(weightInGrams / treeWeightInGrams);
@@ -266,13 +271,10 @@ function readJSON(){
 	var scaleValue = 0;
 	$.getJSON("http://127.0.0.1:8080/scale/", 
     	function(data) {
-        	//$('#content').html('Scale data: ' + data.vekt + '<br/><br/>');
-		scaleValue = data.vekt;
+			scaleValue = data.vekt;
         })
         .success(function() { 
-        	//scaleValue;
-		updateDataStructure(scaleValue);
-		console.log("JSON success, scale value " + scaleValue);
+			console.log("JSON success, scale value " + scaleValue);
 		
         })
         .error(function() { 
@@ -280,7 +282,7 @@ function readJSON(){
         	console.log("JSON error, fake Value " + scaleValue);
         }) 
     ; 
-        
+        updateDisplayWeightWithWeightInGrams(scaleValue);
         setTimeout("readJSON()",2000);//milliseconds to next update
     }
 
