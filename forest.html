@@ -56,6 +56,7 @@ var treeWeightInGrams = 10;
 var animalThresholdInTrees = 5;
 	
 function main() {
+	document.domain = 'artclass.com';
 	var locallyStoredDataStructure = JSON.parse(sessionStorage.getItem('myForest'));
 	if (locallyStoredDataStructure != null) {
 		dataStructure = locallyStoredDataStructure;
@@ -308,7 +309,7 @@ function initializeArray(rows, cols) {
 //reading scale from json 
 function readJSON(){
 	var scaleValue = null;
-	$.getJSON("http://127.0.0.1:8080/scale/", 
+	$.getJSON("http://forest.artclass.com:8080/scale/", 
     	function(data) {
 			scaleValue = data.vekt;
         })
