@@ -2,7 +2,7 @@
 <html>
 <script src="jquery-2.1.4.js"></script>
 <head>
-<meta http-equiv="Refresh" content="2">
+<!-- <meta http-equiv="Refresh" content="2"> -->
 
 </head>
 <body onload="main()">
@@ -81,7 +81,6 @@ function main() {
 	rowHeight = (canvasHeight / forestRows) - 40;
 	columnWidth = canvasWidth / forestColumns;
 	
-	readJSON();
 	drawLines();
 }
 
@@ -322,11 +321,14 @@ function readJSON(){
         	scaleValue = (Math.floor(Math.random() * 5000) + 1);
         	updateDisplayWeightWithWeightInGrams(scaleValue);
         }); 
+        
+        setTimeout("readJSON()", 2000);//milliseconds to next update
 }
 
 $( document ).ready(function() {
         console.log( "jQuery ready: document loaded" );
         main();
+        readJSON();
 });
 
 </script>
