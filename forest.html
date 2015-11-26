@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+<script src="jquery-2.1.4.js"></script>
 <head>
-<meta http-equiv="Refresh" content="30">
+<!-- meta http-equiv="Refresh" content="30" -->
 
 </head>
 <body onload="main()">
@@ -41,6 +42,7 @@ var dataStructure  = [['','','','','','','','','','','','',''],
                       ['','','','','','','','','','','','',''],
                       ['','','','','','','','','','','','',''],
                       ['','','','','','','','','','','','','']];
+
 var serverURL = 'http://127.0.0.1/scale/';
 var canvasWidth = 0;
 var canvasHeight = 0;
@@ -150,7 +152,9 @@ function slope(fromX, fromY, toX, toY) {
 }
 
 function updateDataStructure(weightInGrams) {
-	weightInGrams = 100;
+	//weightInGrams = 100;
+	console.log("updateDataStructure(weightInGrams) value " + weightInGrams);
+        
 	var numberOfTrees = Math.floor(weightInGrams / treeWeightInGrams);
 	var numberOfAnimals = numberOfTrees / animalThresholdInTrees;
 	
@@ -255,6 +259,36 @@ function initializeArray(rows, cols) {
 	
 	return arr;
 }
+
+
+//reading scale from json 
+function readJSON(){
+	var scaleValue = 0;
+	$.getJSON("http://127.0.0.1:8080/scale/", 
+    	function(data) {
+        	//$('#content').html('Scale data: ' + data.vekt + '<br/><br/>');
+		scaleValue = data.vekt;
+        })
+        .success(function() { 
+        	//scaleValue;
+		updateDataStructure(scaleValue);
+		console.log("JSON success, scale value " + scaleValue);
+		
+        })
+        .error(function() { 
+        	scaleValue = (Math.floor(Math.random() * 5000)+1);
+        	console.log("JSON error, fake Value " + scaleValue);
+        }) 
+    ; 
+        
+        setTimeout("readJSON()",2000);//milliseconds to next update
+    }
+
+$( document ).ready(function() {
+        console.log( "jQuery ready: document loaded" );
+        main();
+        readJSON();
+});
 
 </script>
 
