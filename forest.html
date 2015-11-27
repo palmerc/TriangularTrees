@@ -79,15 +79,14 @@ function main() {
 	forestRows = dataStructure.length;
 	forestColumns = dataStructure[0].length;
 	rowHeight = (canvasHeight / forestRows) - 40;
-	columnWidth = canvasWidth / forestColumns;
-	
-	drawLines();
+	columnWidth = canvasWidth / forestColumns;	
 }
 
-function drawLines() {
+function drawLand() {
 	var canvas = document.getElementById('forest');
     var context = canvas.getContext('2d');
-	
+	context.clearRect(0, 0, canvasWidth, canvasHeight);
+
 	horizonX = canvasWidth / 2;
 	horizonY = canvasHeight / 2;    
 
@@ -146,10 +145,11 @@ function slope(fromX, fromY, toX, toY) {
 }
 
 function updateDisplayWeightWithWeightInGrams(weightInGrams) {
+	drawLand();
+
 	var weightInKilograms = weightInGrams / 1000;
 	var canvas = document.getElementById('forest');
 	var context = canvas.getContext('2d');
-	context.clearRect(0, 0, canvas.width, horizonY - 2 * imageHeight);
 	context.font = "30px Arial";
 	context.fillStyle = "#D3D3D3";
 	
